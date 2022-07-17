@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
@@ -34,6 +35,7 @@ class Produit
 
     #[ORM\Column(type: 'float')]
     #[Groups(["burger:read:simple","burger:read:all","write","catalogue:read:simple","complement:read:simple"])]
+    // #[Assert\Positive(message: 'le prix ne doit pas etre negatif')]
     protected $prix;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -46,7 +48,7 @@ class Produit
     protected $description;
 
     #[ORM\Column(type: 'blob', nullable: true)]
-    #[Groups(["write","burger:read:simple"])]
+    #[Groups(["write","burger:read:simple","burger:read:all"])]
     protected $image;
 
     // #[ORM\Column(type: 'blob')]
@@ -112,7 +114,10 @@ class Produit
 
     public function getImage()
     {
-        return base64_encode(stream_get_contents($this->image));
+        if(is_resource($this->image)){
+            return base64_encode(stream_get_contents($this->image));
+        }
+       return base64_encode($this->image);
     }
 
     public function setImage($image): self
@@ -141,5 +146,22 @@ class Produit
         $this->imageBlob = $imageBlob;
 
         return $this;
+    }
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        $test = true;
+        if ($this instanceof Burger || $this instanceof PortionFrite || $this instanceof Menu){
+            if ($this->getPrix() <= 0){
+                $test = false;
+            }
+        }
+        if ($test == false) {
+            $context
+                ->buildViolation("le prix doit ne doit pas etre negatif")
+                ->addViolation()
+            ;
+        }
     }
 }

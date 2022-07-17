@@ -328,18 +328,6 @@ class Commande
         return $this;
     }
 
-    #[Assert\Callback]
-    public function validate(ExecutionContextInterface $context, $payload)
-    {
-        $menus = count($this->getMenuCommandes());
-        $burgers = count($this->getBurgerCommandes());
-        if ($menus==0 && $burgers==0) {
-            $context
-                ->buildViolation("la commande ne doit pas seulement avoir des complements!")
-                ->addViolation()
-            ;
-        }
-    }
 
     /**
      * @return Collection<int, CommandeMenuBoissonTaille>
@@ -371,4 +359,31 @@ class Commande
         return $this;
     }
 
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        $menus = count($this->getMenuCommandes());
+        $burgers = count($this->getBurgerCommandes());
+        if ($menus==0 && $burgers==0) {
+            $context
+                ->buildViolation("la commande ne doit pas seulement avoir des complements!")
+                ->addViolation()
+            ;
+        }
+        
+        $test = false;
+        $menuCom = $this->getMenuCommandes();
+        foreach ($menuCom as $menu) {
+            foreach($menu->getMenu()->getCommandeMenuBoissonTailles() as $boissonTaille){
+                $stock = $boissonTaille->getBoissonTailles()->getStock();
+                $quantiteBoisson = $boissonTaille->getQuantite();
+                if($stock==0 || $stock <0 || $quantiteBoisson > $stock){
+                    $context
+                    ->buildViolation("la boisson que vous avez demandé est en rupture de stock")
+                    ->addViolation()
+                    ;
+                }
+            }
+        }
+    }
 }

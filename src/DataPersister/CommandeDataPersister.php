@@ -38,7 +38,7 @@ class CommandeDataPersister implements DataPersisterInterface
         //dd($data->getMenuCommandes()[0]->getMenu());
         //dd($data->getMenuCommandes()[0]->getMenu()->getMenuTailleBoissons()[0]->getQuantite());
         //dd($data->getMenuCommandes()[0]->getMenu()->getMenuTailleBoissons()[0]->getTailleBoisson()->getBoissonTailleBoissons()[0]->getQuantite());
-        //dd($data->getMenuCommandes()[0]->getMenu()->getMenuTailleBoissons()[0]);
+        //$this->montant->stock($data);
         $data->setNumeroCommande($this->genererNum->genererCom());
         $montantCom = $this->montant->calculMontantCommande($data);
         $data->setMontantCommande($montantCom);
