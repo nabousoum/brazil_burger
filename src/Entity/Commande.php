@@ -384,12 +384,15 @@ class Commande
                 }
             }
         }
-
+        //$quantiteBoissonB = 0;
         foreach ($menuCom as $menu) {
             foreach($menu->getMenu()->getMenuTailleBoissons() as $menuTaille){
                $idTaille = $menuTaille->getTailleBoisson()->getId();
+               $quantiteBoisson = $menuTaille->getQuantite();
                foreach($menu->getMenu()->getCommandeMenuBoissonTailles() as $boissonTaille){
                     $idTailleB = $boissonTaille->getBoissonTailles()->getTailleBoisson()->getId();
+                    $quantiteBoissonB = $boissonTaille->getQuantite();
+                    $tabQ[] = $quantiteBoissonB;
                     $tab[] = $idTailleB;
                 }
                 if (!in_array($idTaille,$tab)){
@@ -397,6 +400,12 @@ class Commande
                         ->buildViolation("la taille de boisson que vous avez choisi ne se trouve pas dans le menu")
                         ->addViolation()
                         ;
+                }
+                if (!in_array($quantiteBoisson,$tabQ) ){
+                    $context
+                    ->buildViolation("la quantite de boisson que vous avez choisi ne se trouve pas dans le menu")
+                    ->addViolation()
+                    ;
                 }
             }
         }

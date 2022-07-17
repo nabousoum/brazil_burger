@@ -36,7 +36,7 @@ class  MontantCommande
             $menu->setPrix($menu->getMenu()->getPrix() * $menu->getQuantite());
             $montantCommande += $menu->getMenu()->getPrix() * $menu->getQuantite();
             foreach($menu->getMenu()->getCommandeMenuBoissonTailles() as $boissonTaille){
-                $quantiteBoisson = $boissonTaille->getQuantite();
+                $quantiteBoisson = $boissonTaille->getQuantite()*$menu->getQuantite();
                 $stock = $boissonTaille->getBoissonTailles()->getStock();
                 $boissonTaille->getBoissonTailles()->setStock($stock-$quantiteBoisson);
             }
