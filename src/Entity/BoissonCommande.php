@@ -25,7 +25,7 @@ class BoissonCommande
     private $quantite=1;
 
     #[ORM\ManyToOne(targetEntity: BoissonTailleBoisson::class, inversedBy: 'boissonCommandes')]
-    #[Groups(["com:write"])]
+    #[Groups(["com:write","com:read:simple"])]
     private $boissonTailleBoisson;
 
     #[ORM\ManyToOne(targetEntity: Commande::class, inversedBy: 'boissonCommandes')]

@@ -28,7 +28,7 @@ class FriteCommande
     private $commande;
 
     #[ORM\ManyToOne(targetEntity: PortionFrite::class, inversedBy: 'friteCommandes')]
-    #[Groups(["com:write"])]
+    #[Groups(["com:write","com:read:simple"])]
     private $portionFrite;
 
     #[ORM\Column(type: 'float')]

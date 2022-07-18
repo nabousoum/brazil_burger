@@ -27,7 +27,7 @@ class BurgerCommande
     private $prix;
 
     #[ORM\ManyToOne(targetEntity: Burger::class, inversedBy: 'burgerCommandes')]
-    #[Groups(["com:write"])]
+    #[Groups(["com:write","com:read:simple"])]
     private $burger;
 
     #[ORM\ManyToOne(targetEntity: Commande::class, inversedBy: 'burgerCommandes')]

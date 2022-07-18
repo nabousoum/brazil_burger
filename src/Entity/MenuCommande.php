@@ -26,7 +26,7 @@ class MenuCommande
     private $prix;
 
     #[ORM\ManyToOne(targetEntity: Menu::class, inversedBy: 'menuCommandes')]
-    #[Groups(["com:write"])]
+    #[Groups(["com:write","com:read:simple"])]
     private $menu;
 
     #[ORM\ManyToOne(targetEntity: Commande::class, inversedBy: 'menuCommandes')]

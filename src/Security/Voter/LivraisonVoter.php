@@ -1,15 +1,15 @@
 <?php
-// api/src/Security/Voter/CommandeVoter.php
+// api/src/Security/Voter/LivraisonVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\Commande;
+use App\Entity\Livraison;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class CommandeVoter extends Voter
+class LivraisonVoter extends Voter
 {
     private $security = null;
 
@@ -20,18 +20,18 @@ class CommandeVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        if ($attribute == "COMMANDE_ALL") {
+        if ($attribute == "LIVRAISON_ALL") {
             $subject = new $subject();
         }
-        $supportsAttribute = in_array($attribute, ['COMMANDE_CREATE', 'COMMANDE_READ', 'COMMANDE_EDIT', 'COMMANDE_DELETE','COMMANDE_ALL']);
-        $supportsSubject = $subject instanceof Commande;
+        $supportsAttribute = in_array($attribute, ['LIVRAISON_CREATE', 'LIVRAISON_READ', 'LIVRAISON_EDIT', 'LIVRAISON_DELETE','LIVRAISON_ALL']);
+        $supportsSubject = $subject instanceof Livraison;
         return $supportsAttribute && $supportsSubject;
    
     }
 
     /**
      * @param string $attribute
-     * @param Commande $subject
+     * @param Livraison $subject
      * @param TokenInterface $token
      * @return bool
      */
@@ -43,25 +43,25 @@ class CommandeVoter extends Voter
             return false;
         }
         switch ($attribute) {
-            case 'COMMANDE_CREATE':
-                if ( $this->security->isGranted("ROLE_CLIENT") ) 
-                { 
-                    return true;
-                }  // only admins can create Commandes
-                break;
-            case 'COMMANDE_ALL':
+            case 'LIVRAISON_CREATE':
                 if ( $this->security->isGranted("ROLE_GESTIONNAIRE") ) 
                 { 
                     return true;
-                }  // only admins can create Commandes
+                }  // only admins can create Livraisons
                 break;
-            case 'COMMANDE_READ':
-                if ( $this->security->isGranted("ROLE_CLIENT") ) 
+            case 'LIVRAISON_ALL':
+                if ( $this->security->isGranted("ROLE_GESTIONNAIRE") ) 
+                { 
+                    return true;
+                }  // only admins can create Livraisons
+                break;
+            case 'LIVRAISON_READ':
+                if ( $this->security->isGranted("ROLE_GESTIONNAIRE") ) 
                 { 
                     return true;
                 } 
                 break;
-            case 'COMMANDE_EDIT':
+            case 'LIVRAISON_EDIT':
                 if ( $this->security->isGranted("ROLE_GESTIONNAIRE") ) 
                 { 
                     return true;

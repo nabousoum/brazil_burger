@@ -2,43 +2,41 @@
 namespace App\DataPersister;
 
 use DateTime;
+use App\Entity\Burger;
 use App\Service\Mailer;
-use App\Entity\Commande;
+use App\Entity\Livraison;
 use App\Service\GenererNumCom;
+use App\Entity\BurgerLivraison;
 use App\Service\PasswordHasher;
+use App\Service\MontantLivraison;
+use App\Service\CalculMontantTotal;
 use Doctrine\ORM\EntityManagerInterface;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
-use App\Entity\Burger;
-use App\Entity\BurgerCommande;
-use App\Service\MontantCommande;
 
-class CommandeDataPersister implements DataPersisterInterface
+class LivraisonDataPersister implements DataPersisterInterface
 {
 
     private EntityManagerInterface $entityManager;
     public function __construct(
     EntityManagerInterface $entityManager,
-    MontantCommande $montant,
-    GenererNumCom $genererNum
+    CalculMontantTotal $montant
     )
     {
         $this->entityManager = $entityManager;
-        $this->genererNum = $genererNum;
         $this->montant = $montant;
     }
     public function supports($data): bool
     {
-        return $data instanceof Commande;
+        return $data instanceof Livraison;
     }
     /**
-    * @param Commande $data
+    * @param Livraison $data
     */
     public function persist($data)
     {
-        $data->setNumeroCommande($this->genererNum->genererCom());
-        $montantCom = $this->montant->calculMontantCommande($data);
-        $data->setMontantCommande($montantCom);
-     
+     //dd($data->getCommandes()[0]->getMontantCommande());
+        $montantTotal = $this->montant->CalculMontant($data);
+        $data->setMontantTotal($montantTotal);
         $this->entityManager->persist($data);
         $this->entityManager->flush();
     }

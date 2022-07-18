@@ -26,7 +26,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
             'normalization_context' => ['groups' => ['com:read:simple']],
             'denormalization_context' => ['groups' => ['com:write']]
         ]
-        ],itemOperations:["put",
+        ],itemOperations:["patch"=>[
+            "security" => "is_granted('COMMANDE_EDIT', object)" ,
+        ],
             "get"=>[
                 'method' => 'get',
                 'status' => Response::HTTP_OK,
@@ -39,7 +41,7 @@ class Commande
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["com:read:simple","com:read:all"])]
+    #[Groups(["com:read:simple","com:read:all","livraison:write"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -384,15 +386,17 @@ class Commande
                 }
             }
         }
-        //$quantiteBoissonB = 0;
+        
         foreach ($menuCom as $menu) {
             foreach($menu->getMenu()->getMenuTailleBoissons() as $menuTaille){
                $idTaille = $menuTaille->getTailleBoisson()->getId();
                $quantiteBoisson = $menuTaille->getQuantite();
+               $quantiteBoissonB = 0;
                foreach($menu->getMenu()->getCommandeMenuBoissonTailles() as $boissonTaille){
                     $idTailleB = $boissonTaille->getBoissonTailles()->getTailleBoisson()->getId();
-                    $quantiteBoissonB = $boissonTaille->getQuantite();
-                    $tabQ[] = $quantiteBoissonB;
+                    if($idTaille == $idTailleB){
+                        $quantiteBoissonB += $boissonTaille->getQuantite();
+                    }   
                     $tab[] = $idTailleB;
                 }
                 if (!in_array($idTaille,$tab)){
@@ -401,7 +405,7 @@ class Commande
                         ->addViolation()
                         ;
                 }
-                if (!in_array($quantiteBoisson,$tabQ) ){
+                if ($quantiteBoisson != $quantiteBoissonB) {
                     $context
                     ->buildViolation("la quantite de boisson que vous avez choisi ne se trouve pas dans le menu")
                     ->addViolation()
@@ -409,20 +413,5 @@ class Commande
                 }
             }
         }
-        // foreach ($menuCom as $menu) {
-        //     foreach($menu->getMenu()->getMenuTailleBoissons() as $menuTaille){
-        //         $quantiteBoisson = $menuTaille->getQuantite();
-        //        foreach($menu->getMenu()->getCommandeMenuBoissonTailles() as $boissonTaille){
-        //             $quantiteBoissonB = $boissonTaille->getQuantite();
-        //         }
-        //     }
-        //     if ($quantiteBoisson != $quantiteBoissonB){
-        //         $context
-        //             ->buildViolation("la quantite de boisson que vous avez choisi ne se trouve pas dans le menu")
-        //             ->addViolation()
-        //             ;
-        //     }
-        // }
-
     }
 }

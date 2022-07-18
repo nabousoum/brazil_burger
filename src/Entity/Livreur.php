@@ -42,7 +42,7 @@ class Livreur extends User
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["livreur:read:all"])]
-    private $etat="dsponible";
+    private $etat="disponible";
 
     #[ORM\OneToMany(mappedBy: 'livreur', targetEntity: Livraison::class)]
     private $livraisons;

@@ -33,3 +33,4 @@ services:
     App\Service\PasswordHasher: ~ 
     App\Service\GenererNumCom: ~ 
     App\Service\MontantCommande: ~ 
+    App\Service\CalculMontantTotal: ~ 
